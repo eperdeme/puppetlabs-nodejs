@@ -8,8 +8,8 @@ describe Puppet::Type.type(:package).provider(:npm) do
       :ensure => :present
     )
     @provider = described_class.new(@resource)
-    @provider.class.stubs(:optional_commands).with(:npm).returns "/usr/local/bin/npm"
-    @provider.class.stubs(:command).with(:npm).returns "/usr/local/bin/npm"
+    @provider.class.stubs(:optional_commands).with(:npm).returns "/usr/bin/npm"
+    @provider.class.stubs(:command).with(:npm).returns "/usr/bin/npm"
   end
 
   def self.it_should_respond_to(*actions)
@@ -43,7 +43,7 @@ describe Puppet::Type.type(:package).provider(:npm) do
     end
 
     it "should return a list of npm packages installed globally" do
-      @provider.class.expects(:execute).with(['/usr/local/bin/npm', 'list', '--json', '--global'], anything).returns(my_fixture_read('npm_global'))
+      @provider.class.expects(:execute).with(['/usr/bin/npm', 'list', '--json', '--global'], anything).returns(my_fixture_read('npm_global'))
       @provider.class.instances.map {|p| p.properties}.sort_by{|res| res[:name]}.should == [
         {:ensure => '2.5.9' , :provider => 'npm', :name => 'express'},
         {:ensure => '1.1.15', :provider => 'npm', :name => 'npm'    },
@@ -51,7 +51,7 @@ describe Puppet::Type.type(:package).provider(:npm) do
     end
 
     it "should log and continue if the list command has a non-zero exit code" do
-      @provider.class.expects(:execute).with(['/usr/local/bin/npm', 'list', '--json', '--global'], anything).returns(my_fixture_read('npm_global'))
+      @provider.class.expects(:execute).with(['/usr/bin/npm', 'list', '--json', '--global'], anything).returns(my_fixture_read('npm_global'))
       Process::Status.any_instance.expects(:success?).returns(false)
       Process::Status.any_instance.expects(:exitstatus).returns(123)
       Puppet.expects(:debug).with(regexp_matches(/123/))
@@ -59,7 +59,7 @@ describe Puppet::Type.type(:package).provider(:npm) do
     end
 
     it "should log and return no packages if JSON isn't output" do
-      @provider.class.expects(:execute).with(['/usr/local/bin/npm', 'list', '--json', '--global'], anything).returns("failure!")
+      @provider.class.expects(:execute).with(['/usr/bin/npm', 'list', '--json', '--global'], anything).returns("failure!")
       Puppet.expects(:debug).with(regexp_matches(/npm list.*failure!/))
       @provider.class.instances.should == []
     end
