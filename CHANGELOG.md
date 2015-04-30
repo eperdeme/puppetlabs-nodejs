@@ -1,3 +1,4 @@
+- Make nodejs::repo::nodesource::apt compatible with puppetlabs-apt 2.x only
 ##2015-05-12 0.8.0
 ###Backwards-incompatible changes
 - Puppet versions below 3.4.0 are no longer supported
