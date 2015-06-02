@@ -11,7 +11,7 @@ describe 'nodejs', :type => :class do
     end
 
     it 'should fail' do
-      expect { subject }.to raise_error(Puppet::Error, /The nodejs module is not supported on Debian Squeeze./)
+      expect { catalogue }.to raise_error(Puppet::Error, /The nodejs module is not supported on Debian Squeeze./)
     end
   end
 
@@ -144,6 +144,20 @@ describe 'nodejs', :type => :class do
           it 'the repo apt::source resource should contain pin = false' do
             should contain_apt__source('nodesource').with({
               'pin' => 'false'
+            })
+          end
+        end
+
+        context 'and repo_url_suffix set to node_0.12' do
+          let :params do
+            default_params.merge!({
+              :repo_url_suffix => 'node_0.12',
+            })
+          end
+
+          it 'the repo apt::source resource should contain location = https://deb.nodesource.com/node_0.12' do
+            should contain_apt__source('nodesource').with({
+              'location' => 'https://deb.nodesource.com/node_0.12'
             })
           end
         end
@@ -305,8 +319,8 @@ describe 'nodejs', :type => :class do
       }
     end
 
-    it 'should fail' do
-      expect { subject }.to raise_error(Puppet::Error, /The nodejs module is not supported on Fedora 18./)
+    it do
+      expect { catalogue }.to raise_error(Puppet::Error, /The nodejs module is not supported on Fedora 18./)
     end
   end
 
@@ -450,10 +464,10 @@ describe 'nodejs', :type => :class do
 
           it 'the nodesource yum repo files should not exist' do
             should contain_yumrepo('nodesource').with({
-              'ensure' => 'absent',
+              'enabled' => 'absent',
             })
             should contain_yumrepo('nodesource-source').with({
-              'ensure' => 'absent',
+              'enabled' => 'absent',
             })
           end
         end
@@ -1137,10 +1151,10 @@ describe 'nodejs', :type => :class do
 
         it 'the nodesource yum repo files should not exist' do
           should contain_yumrepo('nodesource').with({
-            'ensure' => 'absent',
+            'enabled' => 'absent',
           })
           should contain_yumrepo('nodesource-source').with({
-            'ensure' => 'absent',
+            'enabled' => 'absent',
           })
         end
       end
